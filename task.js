@@ -1,93 +1,103 @@
+const fs = require('fs');
 const prompt = require('prompt-sync')();
+
 const tasksFile = 'tasks.json';
 
-// task 
-let tasks = [
-  {
-    id: 1,
-    taskName: "Stay Remote",
-    done: false,
-  },
-  {
-    id: 2,
-    taskName: "Learn on Campus",
-    done: true,
-  },
-];
+let tasks = loadTasks();
 
-// function for to see  all tasks..
+function loadTasks() {
+  try {
+    const data = fs.readFileSync(tasksFile, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveTasks() {
+  const data = JSON.stringify(tasks, null, 2);
+  fs.writeFileSync(tasksFile, data, 'utf8');
+}
+
 function showTasks() {
-  console.log("Your task:");
+  console.log('Your tasks:');
   tasks.forEach((task) => {
-    console.log(`${task.id}. [${task.done ? "x" : " "}] ${task.taskName}`)
+    console.log(`${task.id}. [${task.done ? 'x' : ' '}] ${task.taskName}`);
   });
-};
+}
 
-
-// fuchtion to add a task
 function addTask(taskName) {
   const newTask = {
     id: tasks.length + 1,
     taskName,
     done: false,
   };
-  tasks.push(newTask)
+  tasks.push(newTask);
   console.log(`Task ${newTask.id} added: ${newTask.taskName}`);
-};
-
-
-// to delate task
-function deleteTask(id) {
-  tasks = tasks.filter((task) => task.id !== id);
-  console.log(`Task ${id} deleted`);
+  saveTasks();
 }
 
+function deleteTask(id) {
+  const index = tasks.findIndex((task) => task.id === id);
+  if (index !== -1) {
+    const deletedTask = tasks.splice(index, 1)[0];
+    console.log(`Task ${deletedTask.id} deleted`);
+    saveTasks();
+  } else {
+    console.log(`Task with ID ${id} not found`);
+  }
+}
 
-// function mark as done 
 function markAsDone(id) {
   const task = tasks.find((task) => task.id === id);
-  console.log(`Task ${id} mark as done`);
+  if (task) {
+    task.done = true;
+    console.log(`Task ${task.id} marked as done`);
+    saveTasks();
+  } else {
+    console.log(`Task with ID ${id} not found`);
+  }
 }
 
-
-// Main function to run the task manager system
 function taskManager() {
-  console.log(`Welcome to your task manager. 
+  console.log(`Welcome to your task manager.
   Press:
   1. To see all your tasks
   2. To add a task
   3. To delete a task
   4. To mark a task as done
-  5. To exit the task manager`)
+  5. To exit the task manager`);
 
-
-  const option = prompt("Enter your choice: ")
+  const option = prompt('Enter your choice: ');
 
   switch (option) {
-    case "1":
-      showTasks()
-      taskManager()
+    case '1':
+      showTasks();
+      taskManager();
       break;
-    case "2":
-      const taskName = prompt("Enter task description: ")
+    case '2':
+      const taskName = prompt('Enter task description: ');
       addTask(taskName);
+      taskManager();
       break;
-    case "3":
-      const idToDelete = parseInt(prompt("Enter task id to delete: "));
+    case '3':
+      const idToDelete = parseInt(prompt('Enter task id to delete: '));
       deleteTask(idToDelete);
       taskManager();
       break;
-    case "4":
-      const idTOMarkDone = parseInt(prompt("Enter task to id to mark as done: "));
-      markAsDone(idTOMarkDone);
+    case '4':
+      const idToMarkDone = parseInt(prompt('Enter task id to mark as done: '));
+      markAsDone(idToMarkDone);
       taskManager();
-    case "5":
-      console.log("Enter the task Manager.");
+      break;
+    case '5':
+      console.log('Exiting the task manager.');
       break;
     default:
-      console.log("Invalid option. Please try again.")
+      console.log('Invalid option. Please try again.');
+      taskManager();
       break;
   }
-
 }
+
 taskManager();
