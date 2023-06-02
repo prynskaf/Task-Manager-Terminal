@@ -54,11 +54,11 @@ function markAsDone(id) {
 function taskManager() {
   console.log(`Welcome to your task manager. 
   Press:
-  1. to see all your tasks
-  2. to add a task
-  3. to delete a task
-  4. to mark a task as done
-  5. to exit the task manager`)
+  1. To see all your tasks
+  2. To add a task
+  3. To delete a task
+  4. To mark a task as done
+  5. To exit the task manager`)
 
 
   const option = prompt("Enter your choice: ")
