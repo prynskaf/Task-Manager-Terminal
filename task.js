@@ -1,4 +1,5 @@
 const prompt = require('prompt-sync')();
+const tasksFile = 'tasks.json';
 
 // task 
 let tasks = [
@@ -77,7 +78,7 @@ function taskManager() {
       taskManager();
       break;
     case "4":
-      const idTOMarkDone = parseInt(prompt("Enter task to id to makr as done: "));
+      const idTOMarkDone = parseInt(prompt("Enter task to id to mark as done: "));
       markAsDone(idTOMarkDone);
       taskManager();
     case "5":
